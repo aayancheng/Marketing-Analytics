@@ -22,7 +22,7 @@ PROCESSED_CSV = os.path.join(BASE_DIR, "data", "processed", "transactions_clean.
 SYNTHETIC_CSV = os.path.join(BASE_DIR, "data", "synthetic", "campaign_events.csv")
 
 # Non-product StockCodes to exclude
-NON_PRODUCT_CODES = {"POST", "D", "M", "BANK CHARGES"}
+NON_PRODUCT_CODES = {"POST", "D", "M", "BANK CHARGES", "ADJUST", "ADJUST2", "DOT"}
 
 
 # ---------------------------------------------------------------------------
@@ -55,7 +55,8 @@ def clean_transactions(raw_path: str, output_path: str) -> pd.DataFrame:
     # Filter non-product StockCodes
     before = len(df)
     df = df[~df["StockCode"].isin(NON_PRODUCT_CODES)].copy()
-    print(f"  Dropped {before - len(df):,} non-product rows. Remaining: {len(df):,}")
+    df = df[~df["StockCode"].str.startswith("TEST", na=False)].copy()
+    print(f"  Dropped {before - len(df):,} non-product rows (codes + TEST* prefix). Remaining: {len(df):,}")
 
     # Filter UK-only customers
     before = len(df)
@@ -70,8 +71,8 @@ def clean_transactions(raw_path: str, output_path: str) -> pd.DataFrame:
     # Rename 'Customer ID' to 'CustomerID'
     df = df.rename(columns={"Customer ID": "CustomerID"})
 
-    # Ensure CustomerID is stored as int then string for clean IDs
-    df["CustomerID"] = df["CustomerID"].astype(int).astype(str)
+    # Ensure CustomerID is stored as int64
+    df["CustomerID"] = df["CustomerID"].astype(int)
 
     # Parse InvoiceDate to datetime
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
@@ -130,12 +131,13 @@ def synthesize_campaign_events(transactions: pd.DataFrame, output_path: str) -> 
         b = (23 - modal_hour) / 3.0
         # Use a fresh integer seed derived from global_campaign_idx for reproducibility
         rng_int = int(rng.integers(0, 2**31))
+        np_rs = np.random.RandomState(rng_int)
         send_hours_raw = truncnorm.rvs(
             a, b,
             loc=modal_hour,
             scale=3,
             size=n_emails,
-            random_state=rng_int,
+            random_state=np_rs,
         )
         send_hours = np.round(send_hours_raw).astype(int).clip(0, 23)
 
@@ -153,6 +155,7 @@ def synthesize_campaign_events(transactions: pd.DataFrame, output_path: str) -> 
         random_day_offsets = rng.integers(0, total_campaign_days + 1, size=n_emails)
         base_dates = pd.to_datetime([campaign_start + pd.Timedelta(days=int(d)) for d in random_day_offsets])
 
+        # TODO: vectorise date construction (currently O(n_emails) Python loop)
         # Adjust to nearest correct day-of-week (within the same week)
         send_datetimes = []
         for i in range(n_emails):
