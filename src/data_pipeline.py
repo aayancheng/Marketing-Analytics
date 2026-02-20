@@ -22,7 +22,7 @@ PROCESSED_CSV = os.path.join(BASE_DIR, "data", "processed", "transactions_clean.
 SYNTHETIC_CSV = os.path.join(BASE_DIR, "data", "synthetic", "campaign_events.csv")
 
 # Non-product StockCodes to exclude
-NON_PRODUCT_CODES = {"POST", "D", "M", "BANK CHARGES", "AMAZONFEE", "DOT"}
+NON_PRODUCT_CODES = {"POST", "D", "M", "BANK CHARGES"}
 
 
 # ---------------------------------------------------------------------------
@@ -45,7 +45,8 @@ def clean_transactions(raw_path: str, output_path: str) -> pd.DataFrame:
     df = df.dropna(subset=["Customer ID"])
     print(f"  Dropped {before - len(df):,} rows with null Customer ID. Remaining: {len(df):,}")
 
-    # Exclude cancellations: Invoice starts with 'C' OR Quantity < 0
+    # Exclude EITHER cancelled invoices (prefix 'C') OR returns/adjustments (Quantity < 0)
+    # Both are independent exclusion reasons per the data brief
     before = len(df)
     cancellation_mask = df["Invoice"].astype(str).str.startswith("C") | (df["Quantity"] < 0)
     df = df[~cancellation_mask].copy()
