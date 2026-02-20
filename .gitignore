@@ -1,0 +1,13 @@
+data/raw/
+data/processed/
+data/synthetic/
+models/
+__pycache__/
+*.pkl
+node_modules/
+app/client/dist/
+.env
+*.pyc
+.DS_Store
+.venv/
+notebooks/*_executed.ipynb
