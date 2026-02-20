@@ -72,7 +72,10 @@ def clean_transactions(raw_path: str, output_path: str) -> pd.DataFrame:
     df = df.rename(columns={"Customer ID": "CustomerID"})
 
     # Ensure CustomerID is stored as int64
-    df["CustomerID"] = df["CustomerID"].astype(int)
+    float_ids = df["CustomerID"].astype(float)
+    if (float_ids % 1 != 0).any():
+        raise ValueError("Non-integer Customer ID values detected after nulls dropped.")
+    df["CustomerID"] = float_ids.astype(np.int64)
 
     # Parse InvoiceDate to datetime
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
@@ -129,8 +132,8 @@ def synthesize_campaign_events(transactions: pd.DataFrame, output_path: str) -> 
         # Send hours using truncnorm centered on modal_hour ± 3h, clipped 0-23
         a = (0 - modal_hour) / 3.0
         b = (23 - modal_hour) / 3.0
-        # Use a fresh integer seed derived from global_campaign_idx for reproducibility
-        rng_int = int(rng.integers(0, 2**31))
+        # Use a fresh integer seed derived from the primary RNG state for reproducibility
+        rng_int = int(rng.integers(0, 2**32))
         np_rs = np.random.RandomState(rng_int)
         send_hours_raw = truncnorm.rvs(
             a, b,
@@ -167,6 +170,8 @@ def synthesize_campaign_events(transactions: pd.DataFrame, output_path: str) -> 
             candidate_date = base_date + pd.Timedelta(days=delta_days)
             if candidate_date > campaign_end:
                 candidate_date = base_date - pd.Timedelta(days=(7 - delta_days))
+                if candidate_date < campaign_start:
+                    candidate_date = base_date  # accept base DOW rather than going out of bounds
             send_dt = candidate_date.replace(hour=int(send_hours[i]), minute=0, second=0, microsecond=0)
             send_datetimes.append(send_dt)
 
