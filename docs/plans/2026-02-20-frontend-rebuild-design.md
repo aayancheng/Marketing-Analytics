@@ -10,6 +10,25 @@
 
 ---
 
+## Progress (2026-02-21)
+
+**Tasks 1–15: COMPLETE** — All code implemented, build passes, committed as `5ce9137`.
+- Tailwind + PostCSS configured
+- Shared lib layer (api.js, hooks.js, constants.js)
+- All 12 components built
+- All 3 views built (LookupView, WhatIfView, SegmentView)
+- App.jsx rewritten as sidebar layout shell
+- Verified in Chrome via Playwright: all 3 views render correctly with live API data
+
+**Task 16: COMPLETE**
+- [x] Step 4: Responsive check — mobile hamburger sidebar added, tested at 375px/768px/1280px
+- [x] Step 5: Integration smoke test — all 10 API endpoints return correct status codes
+- [x] Step 6: Final polish commit
+
+**All 16 tasks COMPLETE.** Frontend rebuild finished.
+
+---
+
 ### Task 1: Install autoprefixer and create Tailwind config
 
 **Files:**
