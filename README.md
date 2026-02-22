@@ -20,6 +20,12 @@ npm install  # installs all workspaces
 ## Running
 
 ```bash
+# 0. Build data + features + model artifacts
+source .venv/bin/activate
+python src/data_pipeline.py
+python src/feature_engineering.py
+python src/train.py
+
 # 1. FastAPI (Python ML service)
 source .venv/bin/activate
 uvicorn src.api.main:app --port 8000 --reload
@@ -29,6 +35,14 @@ node app/server/index.js
 
 # 3. React frontend
 cd app/client && npm run dev
+```
+
+## Integration Smoke Test
+
+Run one command to boot FastAPI + Node + Vite, verify endpoint contracts and UI availability, then shut everything down:
+
+```bash
+./scripts/integration_smoke.sh
 ```
 
 ## Data

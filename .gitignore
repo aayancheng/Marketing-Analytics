@@ -6,6 +6,7 @@ __pycache__/
 *.pkl
 node_modules/
 app/client/dist/
+docs/rendered/
 .env
 *.pyc
 .DS_Store
