@@ -1,0 +1,37 @@
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.venv/
+
+# Data files (generated — re-run pipeline to reproduce)
+**/data/raw/
+**/data/processed/
+**/data/synthetic/
+
+# Model artifacts (generated — re-run train.py to reproduce)
+**/models/
+**/*.pkl
+
+# Node / frontend
+**/node_modules/
+**/app/client/dist/
+**/docs/rendered/
+
+# Jupyter notebook execution artifacts
+**/notebooks/*_executed.ipynb
+
+# Environment & secrets
+.env
+**/.env
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Claude local settings
+.claude/
+
+# Playwright MCP logs
+.playwright-mcp/
