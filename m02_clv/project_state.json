@@ -1,0 +1,40 @@
+{
+  "topic": "customer_lifetime_value",
+  "project_dir": "/Users/aayan/MarketingAnalytics/m02_clv",
+  "created_at": "2026-02-26",
+  "phases": {
+    "research":         { "status": "completed", "completed_at": "2026-02-26" },
+    "data_engineering": { "status": "completed", "completed_at": "2026-02-26" },
+    "modeling":         { "status": "completed", "completed_at": "2026-02-26" },
+    "app_building":     { "status": "completed", "completed_at": "2026-02-26" },
+    "documentation":    { "status": "completed", "completed_at": "2026-02-26" }
+  },
+  "decisions": {
+    "model_type": "LightGBM Regressor",
+    "data_source": "shared/data/raw/online_retail_ii.csv",
+    "feature_categories": ["rfm_core", "behavioral", "temporal", "derived_rfm_scores"],
+    "stack": {
+      "primary_model": "lightgbm",
+      "baseline_model": "lifetimes (BG/NBD + Gamma-Gamma)",
+      "target_transform": "log1p",
+      "inverse_transform": "expm1",
+      "interpretability": "shap",
+      "frontend": "react + tailwindcss + recharts",
+      "backend": "fastapi + express proxy"
+    }
+  },
+  "ports": {
+    "fastapi": 8002,
+    "express": 3002,
+    "vite": 5174
+  },
+  "metrics": {
+    "lgbm_mae": 1228,
+    "lgbm_rmse": 3063,
+    "lgbm_mape": 79.3,
+    "lgbm_spearman_r": 0.5995,
+    "top_decile_lift": 5.33,
+    "bgnbd_mae": 1426,
+    "naive_mae": 2551
+  }
+}

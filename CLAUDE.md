@@ -51,8 +51,8 @@ cd m0N_<topic>/app/client && npm run dev        # Vite frontend
 | Model | Status | Notes |
 |-------|--------|-------|
 | m01_time_to_engage | ✅ Complete | Reference implementation |
-| m02_clv | — | Not yet built |
-| m03_churn | ✅ Complete | LightGBM AUC=0.7883, Playwright-tested |
+| m02_clv | ✅ Complete | LightGBM Regressor MAE=£1,228, top-decile lift=5.33x, Playwright-tested |
+| m03_churn | ✅ Complete | LightGBM AUC=0.7883, top-20% lift=2.29x, Playwright-tested |
 | m04_mmm | — | Not yet built |
 | m05_next_best_offer | — | Not yet built |
 
@@ -96,6 +96,14 @@ sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.a
 const riskTier = data?.risk_tier   // read directly, NOT data?.prediction?.risk_tier
 // render when: profile && riskTier  (NOT profile && prediction)
 ```
+
+### CLV-specific API patterns (m02_clv)
+
+- Predict endpoint returns `predicted_clv`, `clv_segment`, `shap_factors` (no `risk_tier` / churn fields)
+- `GET /api/portfolio` — returns all customers for scatter plot (recency vs CLV)
+- Cold-start fallback: customers with < 2 purchases get median CLV (£622)
+- WhatIfView uses numeric sliders (recency_days, frequency, avg_order_value, days_since_first, purchase_velocity), not dropdowns
+- BG/NBD lifetimes fix: `recency=tenure_days`, `T=tenure_days+recency_days`
 
 ## Common Bugs Checklist
 
