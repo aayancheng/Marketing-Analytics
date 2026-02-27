@@ -1,0 +1,5 @@
+{
+  "name": "marketing-analytics",
+  "private": true,
+  "workspaces": ["app/server", "app/client"]
+}
