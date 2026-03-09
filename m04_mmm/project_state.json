@@ -1,0 +1,30 @@
+{
+  "topic": "marketing mix model",
+  "project_dir": "/Users/aayan/zzLearnAndCreate/MarketingAnalytics/m04_mmm",
+  "created_at": "2026-03-06",
+  "phases": {
+    "research":         { "status": "completed", "completed_at": "2026-03-06" },
+    "data_engineering": { "status": "completed", "completed_at": "2026-03-06" },
+    "modeling":         { "status": "completed", "completed_at": "2026-03-08" },
+    "app_building":     { "status": "completed", "completed_at": "2026-03-08" },
+    "documentation":    { "status": "completed", "completed_at": "2026-03-08" },
+    "app_testing":      { "status": "completed", "completed_at": "2026-03-08" }
+  },
+  "decisions": {
+    "model_type": "PyMC-Marketing Bayesian MMM",
+    "model_category": "regression",
+    "data_source": "Synthetic (PyMC-Marketing-style generator with known true parameters)",
+    "channels": ["tv", "ooh", "print", "facebook", "search"],
+    "feature_categories": ["channel_spends", "controls", "trend", "fourier_seasonality"],
+    "stack": {
+      "model_lib": "pymc-marketing>=0.11.0",
+      "sampler": "numpyro (fallback: pymc)",
+      "extra_libs": ["arviz>=0.19.0", "numpyro", "jax", "jaxlib"]
+    }
+  },
+  "ports": {
+    "fastapi": 8004,
+    "express": 3004,
+    "vite": 5176
+  }
+}

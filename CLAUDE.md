@@ -53,7 +53,7 @@ cd m0N_<topic>/app/client && npm run dev        # Vite frontend
 | m01_time_to_engage | ✅ Complete | Reference implementation |
 | m02_clv | ✅ Complete | LightGBM Regressor MAE=£1,228, top-decile lift=5.33x, Playwright-tested |
 | m03_churn | ✅ Complete | LightGBM AUC=0.7883, top-20% lift=2.29x, Playwright-tested |
-| m04_mmm | — | Not yet built |
+| m04_mmm | ✅ Complete | Bayesian MMM (PyMC-Marketing), MAPE=3.9%, R²=0.91, Playwright-tested |
 | m05_next_best_offer | — | Not yet built |
 
 ## Architecture Conventions (all models)
