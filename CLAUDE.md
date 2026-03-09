@@ -9,10 +9,10 @@ This file provides guidance to Claude Code when working anywhere in this reposit
 ├── .venv/                    ← single shared Python venv for ALL models
 ├── requirements.txt          ← consolidated deps for all models
 ├── shared/data/raw/          ← datasets shared between models
-├── m01_time_to_engage/       ← reference implementation (use as pattern source)
-├── m02_clv/
-├── m03_churn/                ← completed, fully tested
-├── m04_mmm/
+├── m01_time_to_engage/       ← reference implementation (time-slot classification)
+├── m02_clv/                  ← LightGBM regression, BG/NBD baseline
+├── m03_churn/                ← LightGBM classification, isotonic calibration
+├── m04_mmm/                  ← Bayesian MMM (PyMC-Marketing), pre-computed JSONs
 └── m05_next_best_offer/
 ```
 
@@ -104,6 +104,16 @@ const riskTier = data?.risk_tier   // read directly, NOT data?.prediction?.risk_
 - Cold-start fallback: customers with < 2 purchases get median CLV (£622)
 - WhatIfView uses numeric sliders (recency_days, frequency, avg_order_value, days_since_first, purchase_velocity), not dropdowns
 - BG/NBD lifetimes fix: `recency=tenure_days`, `T=tenure_days+recency_days`
+
+### MMM-specific patterns (m04_mmm)
+
+- MMM object is **not picklable** — API serves pre-computed JSON files, not a live model
+- Pre-computed artifacts in `models/precomputed/`: `decomposition.json`, `roas.json`, `response_curves.json`, `adstock.json`, `simulator_params.json`, `optimal_allocation.json`
+- `POST /api/simulate` computes predicted revenue from proposed channel spends using adstock/saturation/calibrated betas
+- Frontend has 4 views: Decomposition, Channel Performance, Budget Simulator, Optimal Allocation (not the standard Lookup/What-If/Segments)
+- `feature_engineering.py` exports `CHANNEL_COLUMNS`, `CONTROL_COLUMNS`, `TARGET_COLUMN` (not `FEATURE_COLUMNS`)
+- `train.py` uses `_fallback_export()` when `export_precomputed.py` fails — generates equivalent JSONs from raw posterior samples
+- PyMC-Marketing v0.18: `mmm.fit_result` is xarray Dataset (posterior), `mmm.idata` is ArviZ InferenceData
 
 ## Common Bugs Checklist
 
